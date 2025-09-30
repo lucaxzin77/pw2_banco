@@ -18,7 +18,7 @@ class Cliente
     public function cadastrar(): bool
     {
         try {
-            $sql = "INSERT INTO cliente (nome, senha, telefone, endereco) VALUES (?, ?, ?, ?)";
+            $sql = "CALL p_CadastrarCliente(?, ?, ?, ?)";
 
             $dados = [
                 $this->nome,
@@ -40,7 +40,7 @@ class Cliente
     public function consultarTodos()
     {
         try {
-            $sql = "SELECT * FROM cliente";
+            $sql = "CALL p_ConsultarClientes()";
             $stmt = $this->conn->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -52,7 +52,7 @@ class Cliente
     public function consultarPorId($id)
     {
         try {
-            $sql = "SELECT * FROM cliente WHERE id = ?";
+            $sql = "CALL p_ConsultarClienteByID(?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -65,7 +65,7 @@ class Cliente
     public function editar()
     {
         try {
-            $sql = "UPDATE cliente SET nome = ?, senha = ?, telefone = ?, endereco = ? WHERE id = ?";
+            $sql = "CALL p_EditarCliente(?, ?, ?, ?, ?)";
 
             $dados = [
                 $this->nome,
@@ -82,6 +82,20 @@ class Cliente
         } catch (PDOException $e) {
             echo "Erro ao editar cliente: " . $e->getMessage();
             throw new Exception("Erro ao editar cliente: " . $e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $sql = "CALL p_DeletarCliente(?)";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$id]);
+
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            echo "Erro ao deletar cliente: " . $e->getMessage();
+            throw new Exception("Erro ao deletar cliente: " . $e->getMessage());
         }
     }
 }

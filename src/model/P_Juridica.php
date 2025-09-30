@@ -17,7 +17,7 @@ class P_Juridica {
     public function cadastrar(): bool
     {
         try {
-            $sql = "INSERT INTO P_juridica (razao_social, fundacao, nome_fantasia, cnpj, cliente) VALUES (?, ?, ?, ?, ?)";
+            $sql = "CALL p_CadastrarPJuridica(?, ?, ?, ?, ?)";
 
             $dados = [
                 $this->razao_social,
@@ -40,7 +40,7 @@ class P_Juridica {
     public function consultarTodos()
     {
         try {
-            $sql = "SELECT * FROM P_juridica";
+            $sql = "CALL p_ConsultarPJuridica()";
             $stmt = $this->conn->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -52,7 +52,7 @@ class P_Juridica {
     public function consultarPorCNPJ($cnpj)
     {
         try {
-            $sql = "SELECT * FROM P_juridica WHERE cnpj = ?";
+            $sql = "CALL p_ConsultarPJuridicaByCNPJ(?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$cnpj]);
             return $stmt->fetch(PDO::FETCH_ASSOC);

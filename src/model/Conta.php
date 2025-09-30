@@ -17,10 +17,9 @@ class Conta
     public function cadastrar(): bool
     {
         try {
-            $sql = "INSERT INTO conta (numero, tipo, saldo, cliente_id) VALUES (?, ?, ?, ?)";
+            $sql = "CALL p_CadastrarConta(?, ?, ?)";
 
             $dados = [
-                $this->numero,
                 $this->tipo,
                 $this->saldo,
                 $this->cliente_id
@@ -39,7 +38,7 @@ class Conta
     public function consultarTodos()
     {
         try {
-            $sql = "SELECT * FROM conta";
+            $sql = "CALL p_ConsultarContas()";
             $stmt = $this->conn->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -51,7 +50,7 @@ class Conta
     public function consultarPorNumero($numero)
     {
         try {
-            $sql = "SELECT * FROM conta WHERE numero = ?";
+            $sql = "CALL p_ConsultarContaByNum(?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$numero]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -68,9 +67,9 @@ class Conta
 
                 $this->saldo -= ($valor * 1.05);
 
-                $sql = "UPDATE conta SET saldo = ? WHERE numero = ?";
+                $sql = "CALL p_Sacar(?, ?)";
                 $stmt = $this->conn->prepare($sql);
-                $stmt->execute([$this->saldo, $this->numero]);
+                $stmt->execute([$this->numero, $this->saldo]);
                 return ($stmt->rowCount() > 0);
             } else {
                 throw new Exception("Saldo insuficiente.");
@@ -85,9 +84,9 @@ class Conta
     {
         try {
             $this->saldo += $valor;
-            $sql = "UPDATE conta SET saldo = ? WHERE numero = ?";
+            $sql = "CALL p_Depositar(?, ?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$this->saldo, $this->numero]);
+            $stmt->execute([$this->numero, $this->saldo]);
             return ($stmt->rowCount() > 0);
         } catch (PDOException $e) {
             echo "Erro ao depositar: " . $e->getMessage();
@@ -101,6 +100,7 @@ class Conta
             if ($this->saldo >= $valor) {
                 $this->sacar($valor);
                 $contaDestino->depositar($valor);
+
                 return true;
             } else {
                 throw new Exception("Saldo insuficiente para transferência.");

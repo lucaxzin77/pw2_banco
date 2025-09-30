@@ -18,7 +18,7 @@ class P_Fisica
     public function cadastrar(): bool
     {
         try {
-            $sql = "INSERT INTO P_fisica (data_nasc, sexo, cpf, nome, cliente) VALUES (?, ?, ?, ?, ?)";
+            $sql = "CALL p_CadastrarPFisica(?, ?, ?, ?, ?)";
 
             $dados = [
                 $this->data_nasc,
@@ -41,7 +41,7 @@ class P_Fisica
     public function consultarTodos()
     {
         try {
-            $sql = "SELECT * FROM P_fisica";
+            $sql = "CALL p_ConsultarPFisica()";
             $stmt = $this->conn->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -53,7 +53,7 @@ class P_Fisica
     public function consultarPorCPF($cpf)
     {
         try {
-            $sql = "SELECT * FROM P_fisica WHERE cpf = ?";
+            $sql = "CALL p_ConsultarPFisicaByCPF(?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$cpf]);
             return $stmt->fetch(PDO::FETCH_ASSOC);

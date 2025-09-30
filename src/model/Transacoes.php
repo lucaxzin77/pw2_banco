@@ -19,7 +19,7 @@ class Transacoes
     public function registrar(): bool
     {
         try {
-            $sql = "INSERT INTO transacoes (tipo, valor, descricao, conta_num) VALUES (?, ?, ?, ?)";
+            $sql = "CALL p_RegistrarTransacao(?, ?, ?, ?)";
             $dados = [
                 $this->tipo,
                 $this->valor,
@@ -36,10 +36,21 @@ class Transacoes
         }
     }
 
+    public function consultarTodos(){
+        try {
+            $sql = "CALL p_ConsultarTransacoes()";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Erro ao consultar transações: " . $e->getMessage();
+            throw new Exception("Erro ao consultar transações: " . $e->getMessage());
+        }
+    }
+
     public function consultarPorConta($conta_num)
     {
         try {
-            $sql = "SELECT * FROM transacoes WHERE conta_num = ?";
+            $sql = "CALL p_ConsultarTransacoesByConta(?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$conta_num]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
