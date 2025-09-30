@@ -44,3 +44,59 @@ CREATE TABLE IF NOT EXISTS P_juridica (
 );
 
 ALTER TABLE conta AUTO_INCREMENT = 1000;
+
+CREATE PROCEDURE p_CadastrarCliente (
+    IN nome VARCHAR(255), 
+    IN senha VARCHAR(255), 
+    IN telefone BIGINT, 
+    IN endereco VARCHAR(255))
+    
+    BEGIN
+    INSERT INTO cliente (usuario, senha, telefone, endereco) 
+    VALUES (nome, senha, telefone, endereco);
+END;
+
+CREATE PROCEDURE p_CadastrarConta (
+    IN tipo VARCHAR(255), 
+    IN saldo FLOAT, 
+    IN clienteID INT)
+    
+    BEGIN
+    INSERT INTO conta (tipo_conta, saldo, cliente) 
+    VALUES (tipo, saldo, clienteID);
+END;
+
+CREATE PROCEDURE p_RegistrarTransacao (
+    IN tipo VARCHAR(255), 
+    IN valor FLOAT, 
+    IN descricao VARCHAR(255),
+    IN contaNum INT)
+    
+    BEGIN
+    INSERT INTO transacoes (tipo, valor, descricao, conta_num) 
+    VALUES (tipo, valor, descricao, contaNum);
+END;
+
+CREATE PROCEDURE p_CadastrarPFisica (
+    IN data_nasc DATE,
+    IN sexo VARCHAR(255),
+    IN cpf BIGINT,
+    IN nome VARCHAR(255),
+    IN clienteID INT)
+    
+    BEGIN
+    INSERT INTO P_fisica (data_nasc, sexo, cpf, nome, cliente) 
+    VALUES (data_nasc, sexo, cpf, nome, clienteID);
+END;
+
+CREATE PROCEDURE p_CadastrarPJuridica (
+    IN razao_social VARCHAR(255),
+    IN fundacao DATE,
+    IN nome_fantasia VARCHAR(255),
+    IN cnpj BIGINT,
+    IN clienteID INT)
+    
+    BEGIN
+    INSERT INTO P_fisica (razao_social, fundacao, nome_fantasia, cnpj, cliente) 
+    VALUES (razao_social, fundacao, nome_fantasia, cnpj, clienteID);
+END;
