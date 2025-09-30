@@ -13,18 +13,19 @@
 </head>
 
 <body>
+    <h1>Cadastrar Cliente</h1>
     <div>
         <form method="post" >
-            <label for="nome">Nome:</label>
+            <label for="nome">Nome</label>
             <input type="text" id="nome" name="nome" required>
     
-            <label for="senha">Senha:</label>
+            <label for="senha">Senha</label>
             <input type="password" id="senha" name="senha" required>
     
-            <label for="telefone">Telefone:</label>
+            <label for="telefone">Telefone</label>
             <input type="tel" id="telefone" name="telefone" required>
     
-            <label for="endereco">Endereço:</label>
+            <label for="endereco">Endereço</label>
             <input type="text" id="endereco" name="endereco" required>
     
             <button type="submit">Cadastrar</button>

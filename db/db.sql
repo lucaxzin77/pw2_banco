@@ -250,10 +250,21 @@ CREATE PROCEDURE p_Sacar (IN contaNum INT, IN valor FLOAT)
 BEGIN
     UPDATE saldo SET saldo = saldo - (valor * 1.05)
     WHERE numero = contaNum;
+
+    CALL p_RegistrarTransacao('Saque', valor, CONCAT('Saque de R$', valor, ' realizado!'), contaNum);
 END;
 
 CREATE PROCEDURE p_Depositar (IN contaNum INT, IN valor FLOAT)
 BEGIN
     UPDATE saldo SET saldo = saldo + valor
     WHERE numero = contaNum;
+
+    CALL p_RegistrarTransacao('Deposito', valor, CONCAT('Deposito de R$', valor, ' realizado!'), contaNum);
+END;
+
+CREATE PROCEDURE p_Transferir (IN contaOrigem INT, IN contaDestino INT, IN valor FLOAT)
+BEGIN
+    CALL p_Sacar(contaOrigem, valor);
+    CALL p_Depositar(contaDestino, valor);
+    CALL p_RegistrarTransacao('Transferencia', valor, CONCAT('Transferencia de R$', valor, ' realizada para a conta de numero ', contaDestino), contaOrigem);
 END;

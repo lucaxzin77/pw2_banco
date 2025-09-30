@@ -64,12 +64,9 @@ class Conta
     {
         try {
             if ($this->saldo >= $valor) {
-
-                $this->saldo -= ($valor * 1.05);
-
                 $sql = "CALL p_Sacar(?, ?)";
                 $stmt = $this->conn->prepare($sql);
-                $stmt->execute([$this->numero, $this->saldo]);
+                $stmt->execute([$this->numero, $valor]);
                 return ($stmt->rowCount() > 0);
             } else {
                 throw new Exception("Saldo insuficiente.");
@@ -83,11 +80,14 @@ class Conta
     public function depositar($valor): bool
     {
         try {
-            $this->saldo += $valor;
-            $sql = "CALL p_Depositar(?, ?)";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$this->numero, $this->saldo]);
-            return ($stmt->rowCount() > 0);
+            if ($this->saldo >= $valor) {
+                $sql = "CALL p_Depositar(?, ?)";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute([$this->numero, $valor]);
+                return ($stmt->rowCount() > 0);
+            } else {
+                throw new Exception("Valor de depósito inválido.");
+            }
         } catch (PDOException $e) {
             echo "Erro ao depositar: " . $e->getMessage();
             throw new Exception("Erro ao depositar: " . $e->getMessage());
@@ -98,10 +98,10 @@ class Conta
     {
         try {
             if ($this->saldo >= $valor) {
-                $this->sacar($valor);
-                $contaDestino->depositar($valor);
-
-                return true;
+                $sql = "CALL p_Transferir(?, ?, ?)";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute([$this->numero, $contaDestino->numero, $valor]);
+                return ($stmt->rowCount() > 0);
             } else {
                 throw new Exception("Saldo insuficiente para transferência.");
             }
